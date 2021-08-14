@@ -32,11 +32,7 @@ namespace CP380_B1_BlockList.Models
         {
             var sha256 = SHA256.Create();
             var json = JsonSerializer.Serialize(Data);
-
-            //
-            // TODO
-            //
-            var inputString = $""; // TODO
+            var inputString = $"{TimeStamp.Date:yyyy-MM-dd hh:mm:ss tt}-{PreviousHash}-{Nonce}-{json}"; // creating the input string in the format: "2021-07-21 1:14:57 AM-W0n2AYsQ+QiU4ffu5jV+kuAiz30LUHGmkHsjTxZJobo=-1-[{\"User\":\"user\",\"TransactionType\":2,\"Amount\":10,\"Item\":\"\"}]"
 
             var inputBytes = Encoding.ASCII.GetBytes(inputString);
             var outputBytes = sha256.ComputeHash(inputBytes);
@@ -46,7 +42,16 @@ namespace CP380_B1_BlockList.Models
 
         public void Mine(int difficulty)
         {
-            // TODO
+            string hashValidation = new String('C', difficulty);     //to generate a string that has difficulty number of 'C' in it
+            string hashedString = CalculateHash();                   //To generate the hash string for the current block   
+            while(hashedString.Substring(0, difficulty) != hashValidation)  //Checking whether hash string begins with difficulty number of 'C'
+            {
+                Nonce++;                                            //increment Nonce of the block if the condition is wrong
+                hashedString = CalculateHash();                     // Generate new hash string with the incremented Nonce Value
+            }                                                       //Repeat till the hash string begins with difficulty number of 'C'
+           
+            Hash = hashedString;
+                    
         }
     }
 }
